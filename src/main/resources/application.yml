@@ -1,0 +1,39 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: carrier-pickup-service
+  
+  profiles:
+    active: dev
+
+carrier-pickup:
+  usps-pickup-service-url: ${USPS_PICKUP_SERVICE_URL:https://sit-cccservices.usps.gov/cpws/PackagePickupV5Service}
+  usps-pickup-timeout: ${USPS_PICKUP_TIMEOUT:30000}
+  usps-client-id: ${USPS_CLIENT_ID:CNS}
+  cache-ttl: ${CACHE_TTL:3600}
+  enable-caching: ${ENABLE_CACHING:true}
+  max-retries: ${MAX_RETRIES:3}
+  retry-delay-ms: ${RETRY_DELAY_MS:1000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+  health:
+    defaults:
+      enabled: true
+
+logging:
+  level:
+    gov.usps.cns.carrierpickup: INFO
+    org.springframework.ws: WARN
+    org.apache.http: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

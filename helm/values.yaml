@@ -1,0 +1,56 @@
+name: carrier-pickup
+labels:
+  app.kubernetes.io/name: carrier-pickup
+  app.kubernetes.io/instance: carrier-pickup
+  app.kubernetes.io/component: carrier-pickup
+  app.kubernetes.io/part-of: cns
+selectorLabels:
+  app.kubernetes.io/name: carrier-pickup
+  app.kubernetes.io/instance: carrier-pickup
+
+replicaCount: 1
+image:
+  repository: artifactory.usps.gov/eir-9103-docker/carrier-pickup
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "1.0.0-SNAPSHOT"
+imagePullSecrets:
+  - name: artifactory
+
+container:
+  env:
+    USPS_PICKUP_SERVICE_URL: "https://sit-cccservices.usps.gov/cpws/PackagePickupV5Service"
+    USPS_PICKUP_TIMEOUT: "30000"
+    USPS_CLIENT_ID: "CNS"
+    CACHE_TTL: "3600"
+    ENABLE_CACHING: "true"
+    MAX_RETRIES: "3"
+    RETRY_DELAY_MS: "1000"
+    SPRING_PROFILES_ACTIVE: "prod"
+    LOGGING_LEVEL_GOV_USPS_CNS_CARRIERPICKUP: "INFO"
+    LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WS: "WARN"
+    LOGGING_LEVEL_ORG_APACHE_HTTP: "WARN"
+
+podSecurityContext: {}
+
+securityContext:
+  readOnlyRootFilesystem: false
+  allowPrivilegeEscalation: false
+  privileged: false
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+
+service:
+  type: ClusterIP
+  port: 8080
+  protocol: TCP
+  targetPort: 8080
+
+resources:
+  limits:
+    # cpu: 500m
+    memory: 1024Mi
+  requests:
+    cpu: 100m
+    memory: 1024Mi
